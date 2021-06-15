@@ -66,3 +66,5 @@ $ ./sort_bench $((2**20)) 10
       53 ms |      103 ms |       58 ms | 
       52 ms |      103 ms |       56 ms |
 ```
+
+It's also interesting to me how much better my implementation of C radix sort got with more optimization levels while quicksort had more modest improvements. I havent looked at the resulting assembly to understand why.
