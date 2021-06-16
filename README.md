@@ -15,16 +15,16 @@ Results (no optimization flags passed):
 $ ./sort_bench $((2**20)) 10
 1048576 elements in the array
    C Radix  |  Quicksort  |  ASM Radix  |
-     132 ms |      120 ms |       55 ms | 
-     131 ms |      120 ms |       56 ms | 
-     131 ms |      120 ms |       56 ms | 
-     131 ms |      119 ms |       58 ms | 
-     132 ms |      119 ms |       55 ms | 
-     131 ms |      119 ms |       56 ms | 
-     130 ms |      120 ms |       56 ms | 
-     129 ms |      120 ms |       54 ms | 
-     129 ms |      119 ms |       57 ms | 
-     130 ms |      120 ms |       59 ms | 
+     129 ms |      118 ms |       53 ms |
+     130 ms |      118 ms |       54 ms |
+     130 ms |      117 ms |       51 ms |
+     128 ms |      118 ms |       51 ms |
+     129 ms |      119 ms |       53 ms |
+     129 ms |      118 ms |       52 ms |
+     130 ms |      118 ms |       54 ms |
+     129 ms |      118 ms |       51 ms |
+     129 ms |      117 ms |       55 ms |
+     129 ms |      118 ms |       53 ms |
 ```
 
 ### O2 & O3 Optimization Level
