@@ -11,22 +11,15 @@ void c_radix_sort(uint64_t *arr, size_t arr_len);
 void print_arr(uint64_t *arr, size_t arr_len);
 uint64_t *generate_random_array(size_t arr_size);
 int cmpfunc(const void *a, const void *b);
-void benchmark_c_radix(size_t arr_size);
-void benchmark_qsort(size_t arr_size);
-void benchmark_asm_radix(size_t arr_size);
+double benchmark_c_radix(size_t arr_size);
+double benchmark_qsort(size_t arr_size);
+double benchmark_asm_radix(size_t arr_size);
+void print_result(double time);
 
 char usage[] = "Usage %s: %s < array size > < number of times to repeat >";
 
 int main(int argc, char *argv[])
 {
-#ifdef DEBUG
-    uint64_t test_arr1[] = {1111, 2, 3, 44, 5, 666, 0, 0, 7};
-    printf("Unsorted array: ");
-    print_arr(test_arr1, sizeof(test_arr1) / sizeof(test_arr1[0]));
-    radix_sort(test_arr1, sizeof(test_arr1) / sizeof(test_arr1[0]));
-    printf("Sorted array:   ");
-    print_arr(test_arr1, sizeof(test_arr1) / sizeof(test_arr1[0]));
-#else
     if (argc != 3)
     {
         fprintf(stderr, usage, argv[0], argv[0]);
@@ -35,43 +28,57 @@ int main(int argc, char *argv[])
     size_t random_arr_size = strtol(argv[1], NULL, 10);
     uint64_t num_times = strtol(argv[2], NULL, 10);
 
-    printf("%ld elements in the array\n", random_arr_size);
+    printf("%lu elements in the array\n", random_arr_size);
     printf("   C Radix  |  Quicksort  |  ASM Radix  |\n");
+    // double result = 0;
 
     for (uint64_t i = 0; i < num_times; i++)
     {
-        benchmark_c_radix(random_arr_size);
-        benchmark_qsort(random_arr_size);
-        benchmark_asm_radix(random_arr_size);
+        print_result(benchmark_c_radix(random_arr_size));
+        print_result(benchmark_qsort(random_arr_size));
+        print_result(benchmark_asm_radix(random_arr_size));
         printf("\n");
     }
-#endif
     return 0;
 }
 
-void benchmark_c_radix(size_t arr_size)
+void print_result(double time)
 {
-    // 514 mb res memory
+    if ((time * 1000) / 1 < 5)
+        printf("%8.0f μs | ", (time * 1000000) / 1);
+    else
+        printf("%8.0f ms | ", (time * 1000) / 1);
+}
+
+int verify_in_order(uint64_t *arr, size_t arr_len)
+{
+    for (size_t i = 1; i < arr_len; i++)
+        if (arr[i] < arr[i - 1])
+            return 0;
+    return 1;
+}
+
+double benchmark_c_radix(size_t arr_size)
+{
     clock_t start, end;
     double cpu_time_used;
     uint64_t *random_arr = generate_random_array(arr_size);
     if (random_arr == NULL)
     {
         fprintf(stderr, "Unable to allocate array!\n");
-        return;
+        return 0;
     }
     start = clock();
     c_radix_sort(random_arr, arr_size);
     end = clock();
+    if (!verify_in_order(random_arr, arr_size))
+        fprintf(stderr, "%s: Error, array not in sorted order\n", __func__);
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     free(random_arr);
-    if ((cpu_time_used * 1000) / 1 < 5)
-        printf("%8.0f us | ", (cpu_time_used * 1000000) / 1);
-    else
-        printf("%8.0f ms | ", (cpu_time_used * 1000) / 1);
+    return cpu_time_used;
 }
 
-void benchmark_asm_radix(size_t arr_size)
+double benchmark_asm_radix(size_t arr_size)
 {
     clock_t start, end;
     double cpu_time_used;
@@ -79,20 +86,19 @@ void benchmark_asm_radix(size_t arr_size)
     if (random_arr == NULL)
     {
         fprintf(stderr, "Unable to allocate array!\n");
-        return;
+        return 0;
     }
     start = clock();
     radix_sort(random_arr, arr_size);
     end = clock();
+    if (!verify_in_order(random_arr, arr_size))
+        fprintf(stderr, "%s: Error, array not in sorted order\n", __func__);
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     free(random_arr);
-    if ((cpu_time_used * 1000) / 1 < 5)
-        printf("%8.0f us | ", (cpu_time_used * 1000000) / 1);
-    else
-        printf("%8.0f ms | ", (cpu_time_used * 1000) / 1);
+    return cpu_time_used;
 }
 
-void benchmark_qsort(size_t arr_size)
+double benchmark_qsort(size_t arr_size)
 {
     clock_t start, end;
     double cpu_time_used;
@@ -100,17 +106,16 @@ void benchmark_qsort(size_t arr_size)
     if (random_arr == NULL)
     {
         fprintf(stderr, "Unable to allocate array!\n");
-        return;
+        return 0;
     }
     start = clock();
     qsort(random_arr, arr_size, sizeof(uint64_t), cmpfunc);
     end = clock();
+    if (!verify_in_order(random_arr, arr_size))
+        fprintf(stderr, "%s: Error, array not in sorted order\n", __func__);
     cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
     free(random_arr);
-    if ((cpu_time_used * 1000) / 1 < 5)
-        printf("%8.0f us | ", (cpu_time_used * 1000000) / 1);
-    else
-        printf("%8.0f ms | ", (cpu_time_used * 1000) / 1);
+    return cpu_time_used;
 }
 
 int cmpfunc(const void *a, const void *b)
@@ -140,7 +145,7 @@ void c_radix_sort(uint64_t *arr, size_t arr_len)
             digit_counts[count_index]++;
         }
 
-        // Do a cum sum of the digit_counts
+        // Do a cumulative sum of the digit_counts
         for (uint16_t digit = 1; digit < 256; digit++)
         {
             digit_counts[digit] += digit_counts[digit - 1];
