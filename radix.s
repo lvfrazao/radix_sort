@@ -8,7 +8,7 @@ global radix_sort ; Our sorting function
 %macro MemClearDigitCount 0
     ; Uses 256 bit registers to clear 32 bytes at a time
     ; digit_counts is 64
-    lea rcx, [digit_counts] ; Need for PIC
+    ; digit_counts in rcx
     vpxor ymm0, ymm0, ymm0
     xor rdi, rdi
 %%memclr_head:
@@ -33,6 +33,7 @@ global radix_sort ; Our sorting function
     ; rax is our temp / intermediate array
     ; rdx is our array to sort
     ; r8 is our array len
+    lea rcx, [digit_counts] ; Need for PIC
     MemClearDigitCount
 
     ; rdi will hold the array index
@@ -44,9 +45,7 @@ global radix_sort ; Our sorting function
     CalcCountIndex %1; count index goes into rsi
 
     ; digit_counts[count_index]++;
-    lea rcx, [digit_counts] ; Need for PIC
     inc qword [rcx + rsi * 8]
-
     inc rdi
     jmp %%count_sort_head
 %%count_sort_end:
@@ -68,7 +67,6 @@ global radix_sort ; Our sorting function
 
     ; for (size_t i = arr_len; i > 0; i--)
     mov rdi, r8
-    lea rcx, [digit_counts] ; Need for PIC
     dec rdi
 %%write_to_intermediate_head:
     CalcCountIndex %1; count index goes into rsi
