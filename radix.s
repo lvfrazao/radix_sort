@@ -69,8 +69,8 @@ global radix_sort ; Our sorting function
     ; for (size_t i = arr_len; i > 0; i--)
     mov rdi, r8
     lea rcx, [digit_counts] ; Need for PIC
-%%write_to_intermediate_head:
     dec rdi
+%%write_to_intermediate_head:
     CalcCountIndex %1; count index goes into rsi
     ; intermediate_arr[--digit_counts[count_index]] = arr[i];
     ; rdi is our loop counter i
@@ -82,9 +82,16 @@ global radix_sort ; Our sorting function
     mov rsi, [rdx + rdi * 8] ; arr[i]
     mov [rax + r9 * 8], rsi
 
-    test rdi, rdi
+    dec rdi
     jnz %%write_to_intermediate_head
 %%write_to_intermediate_end:
+    ; Final iteration of write_to_intermediate
+    ; Took out the final iteration in order to remove a call to test rdi, rdi
+    CalcCountIndex %1; count index goes into rsi
+    dec qword [rcx + rsi * 8]
+    mov r9, [rcx + rsi * 8] ; --digit_counts[count_index]
+    mov rsi, [rdx + rdi * 8] ; arr[i]
+    mov [rax + r9 * 8], rsi
 
     ; Now we need to switch our pointers
     ; uint64_t *temp = arr;
