@@ -22,9 +22,9 @@ global radix_sort ; Our sorting function
     ; uint64_t count_index = (arr[i] >> (8 * cur_digit)) & (RADIX - 1);
     ; We will use rsi to hold the digit we're current examining
     mov rsi, [rdx + rdi * 8] ; Load arr[i] into rsi
-    mov rcx, %1 ; Load current digit were sorting on
-    shl rcx, 3  ; Multiply by 8
-    shr rsi, cl
+    mov r9, %1 ; Load current digit were sorting on
+    shl r9, 3  ; Multiply by 8
+    shrx rsi, rsi, r9
     and rsi, RADIX - 1
 %endmacro
 
@@ -68,6 +68,7 @@ global radix_sort ; Our sorting function
 
     ; for (size_t i = arr_len; i > 0; i--)
     mov rdi, r8
+    lea rcx, [digit_counts] ; Need for PIC
 %%write_to_intermediate_head:
     dec rdi
     CalcCountIndex %1; count index goes into rsi
@@ -75,15 +76,14 @@ global radix_sort ; Our sorting function
     ; rdi is our loop counter i
     ; rsi is our count_index
     ; rcx is our index into the intermediate array (derived from the count sort)
-    lea rcx, [digit_counts] ; Need for PIC
     dec qword [rcx + rsi * 8]
-    mov rcx, [rcx + rsi * 8] ; --digit_counts[count_index]
+    mov r9, [rcx + rsi * 8] ; --digit_counts[count_index]
 
     mov rsi, [rdx + rdi * 8] ; arr[i]
-    mov [rax + rcx * 8], rsi
+    mov [rax + r9 * 8], rsi
 
-    cmp rdi, 0
-    ja %%write_to_intermediate_head
+    test rdi, rdi
+    jnz %%write_to_intermediate_head
 %%write_to_intermediate_end:
 
     ; Now we need to switch our pointers
