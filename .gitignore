@@ -1,0 +1,4 @@
+*.o
+*.lst
+sort_bench
+
