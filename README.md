@@ -15,16 +15,16 @@ Results (no optimization flags passed):
 $ ./sort_bench $((2**20)) 10
 1048576 elements in the array
    C Radix  |  Quicksort  |  ASM Radix  |
-     129 ms |      118 ms |       53 ms |
-     130 ms |      118 ms |       54 ms |
-     130 ms |      117 ms |       51 ms |
-     128 ms |      118 ms |       51 ms |
-     129 ms |      119 ms |       53 ms |
-     129 ms |      118 ms |       52 ms |
-     130 ms |      118 ms |       54 ms |
-     129 ms |      118 ms |       51 ms |
-     129 ms |      117 ms |       55 ms |
-     129 ms |      118 ms |       53 ms |
+     127 ms |      115 ms |       44 ms |
+     131 ms |      116 ms |       50 ms |
+     126 ms |      115 ms |       44 ms |
+     127 ms |      115 ms |       40 ms |
+     125 ms |      115 ms |       45 ms |
+     126 ms |      115 ms |       46 ms |
+     128 ms |      115 ms |       45 ms |
+     130 ms |      121 ms |       42 ms |
+     127 ms |      116 ms |       45 ms |
+     127 ms |      115 ms |       45 ms |
 ```
 
 ### O2 & O3 Optimization Level
@@ -37,16 +37,16 @@ O2:
 $ ./sort_bench $((2**20)) 10
 1048576 elements in the array
    C Radix  |  Quicksort  |  ASM Radix  |
-      51 ms |      101 ms |       54 ms |
-      51 ms |      100 ms |       52 ms |
       51 ms |      101 ms |       48 ms |
-      51 ms |      101 ms |       49 ms |
-      51 ms |      101 ms |       47 ms |
-      51 ms |      101 ms |       49 ms |
-      52 ms |      100 ms |       48 ms |
-      50 ms |      100 ms |       52 ms |
-      51 ms |      101 ms |       50 ms |
-      52 ms |      101 ms |       48 ms |
+      50 ms |      101 ms |       49 ms |
+      51 ms |      101 ms |       43 ms |
+      50 ms |      101 ms |       48 ms |
+      49 ms |      101 ms |       48 ms |
+      49 ms |      101 ms |       47 ms |
+      51 ms |      102 ms |       49 ms |
+      46 ms |      101 ms |       49 ms |
+      50 ms |      101 ms |       47 ms |
+      51 ms |      101 ms |       48 ms |
 ```
 
 O3:
@@ -55,16 +55,16 @@ O3:
 $ ./sort_bench $((2**20)) 10
 1048576 elements in the array
    C Radix  |  Quicksort  |  ASM Radix  |
-      51 ms |       99 ms |       54 ms |
-      49 ms |       99 ms |       49 ms |
-      50 ms |       99 ms |       55 ms |
-      50 ms |      100 ms |       50 ms |
-      51 ms |       99 ms |       54 ms |
-      48 ms |       99 ms |       55 ms |
-      51 ms |      100 ms |       53 ms |
-      51 ms |       99 ms |       51 ms |
-      50 ms |      100 ms |       53 ms |
-      50 ms |      101 ms |       53 ms |
+      49 ms |       98 ms |       42 ms |
+      43 ms |      100 ms |       44 ms |
+      50 ms |      101 ms |       45 ms |
+      52 ms |      101 ms |       48 ms |
+      50 ms |      101 ms |       46 ms |
+      52 ms |      101 ms |       48 ms |
+      51 ms |      101 ms |       47 ms |
+      50 ms |      101 ms |       45 ms |
+      50 ms |      101 ms |       44 ms |
+      50 ms |      101 ms |       46 ms |
 ```
 
 It's also interesting to me how much better my implementation of C radix sort got with more optimization levels while quicksort had more modest improvements. I havent looked at the resulting assembly to understand why.
