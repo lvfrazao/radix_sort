@@ -71,9 +71,10 @@ global radix_sort ; Our sorting function
 %%write_to_intermediate_head:
     CalcCountIndex %1; count index goes into rsi
     ; intermediate_arr[--digit_counts[count_index]] = arr[i];
-    ; rdi is our loop counter i
-    ; rsi is our count_index
-    ; rcx is our index into the intermediate array (derived from the count sort)
+    ; rdi is the loop counter i
+    ; rsi is the count_index
+    ; rcx is the digit_counts array
+    ; rax is the intermediate_arr
     dec qword [rcx + rsi * 8]
     mov r9, [rcx + rsi * 8] ; --digit_counts[count_index]
 
