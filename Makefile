@@ -1,6 +1,6 @@
 CC = gcc
 AS = nasm
-CFLAGS = -g -Wall -Wextra -pedantic -Werror -O2
+CFLAGS = -g -Wall -Wextra -pedantic -Werror -O2 -flto
 ASFLAGS = -felf64 -g -F dwarf -w+all
 
 .PHONY: all
