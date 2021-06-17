@@ -18,13 +18,6 @@ global radix_sort ; Our sorting function
     jne %%memclr_head
 %endmacro
 
-%macro CalcCountIndex 1
-    ; uint64_t count_index = (arr[i] >> (8 * cur_digit)) & (RADIX - 1);
-    ; We will use rsi to hold the digit we're current examining
-    shrx rsi, rsi, r9
-    movzx rsi, sil
-%endmacro
-
 %macro CountSortbyDigit 1
     ; %1 = which digit in a 64bit 256 radix number I want to countsort on
     ; rax is our temp / intermediate array
